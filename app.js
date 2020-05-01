@@ -1,49 +1,48 @@
 'use strict';
-function distance (x1, y1, x2, y2) {
-    return Math.sqrt(Math.pow(x2-x1, 2) + Math.pow(y2-y1, 2));
+
+function setup() {
+    createCanvas(document.body.clientWidth, document.body.clientHeight);
 }
 
-function runAnimation() {
-    var canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-    target.append(canvas);
-    canvas.width = target.clientWidth;
-    canvas.height = target.clientHeight;
+const inc = 0.01;
+let start = 0;
 
-    class StartingPoint {
-        constructor (x,y, color) {
-            this.x = x;
-            this.y = y;
-            this.color = color;
-        }
+function draw() {
 
-        draw () {
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
-            ctx.closePath();
-            ctx.fillStyle = this.color || color;
-            ctx.fill();
-        }
+    //perlin noise
+    background(51);
+    stroke(255);
+    noFill();
+
+    beginShape();
+
+    let xoff = start;
+
+    for (let x = 0; x < width; x++){
+        let y = noise(xoff) * height;
+        vertex(x, y);
+        xoff += inc;
     }
 
-    var startingPoints = [];
-    for (let i = 0; i < 1; i++)
-        startingPoints.push(new StartingPoint(Math.random() * (canvas.width - 5) + 5, (Math.random() * (canvas.height - 5) + 5)));
+    endShape();
 
-    var time = Date.now();
+    //sinus wave with added perlin noise
+    stroke(125,125,255);
 
-    function renderLoop(now) {
+    beginShape();
 
-        var timeDelta = (now - time) / 1000;
+    let xoff3 = start;
 
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        time = now;
-
-        requestAnimationFrame(renderLoop);
+    for (let x = 0; x < width; x++){
+        let y = noise(xoff3) * 300 + height/2 - 125 + sin(xoff3) * height/2;
+        vertex(x, y);
+        xoff3 += inc;
     }
 
-    renderLoop();
+    endShape();
+
+    start += inc;
 }
 
-runAnimation();
+setup();
+draw();
